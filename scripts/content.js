@@ -1,10 +1,11 @@
+// scripts/content.js
 
-
+// Listens for messages from the popup.js and starts the solver when requested
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>  {
   if (request.action === "solve_strands") {
     console.log("Received solve request from popup.");
+
     // Start the solver process
-    
     startSolver().then((result) => {
         console.log("Solver finished. Found:", result);
         sendResponse({ status: "success", data: result });
@@ -15,26 +16,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>  {
   }
 });
 
-async function loadDictionary() {
-    try {
-        const url = chrome.runtime.getURL('assets/words_alpha.txt');
-        const response = await fetch(url);
-        const text = await response.text();
-
-        const words = new Set(
-            text.split(/\r?\n/)
-            .map(w => w.trim().toLowerCase())
-        );
-
-        console.log(`Dictionary loaded with ${words.size} words`);
-        return words;
-    } catch (e) {
-        console.log(`Error loading dictionary: ${e}`);
-        alert("Error loading dictionary file. Check manifest.json permissions.");
-        return null;
-    }
-}
-
+// Extracts the current grid letters and their corresponding button elements
 function getGrid() {
     const grid = [];
     const height = 8;
@@ -70,7 +52,7 @@ async function startSolver() {
     console.log("Starting solver...");
     const dictionary = await loadDictionary();
     const grid = getGrid();
-    const result = []
+    const uniqueResults = new Map();
     const rows = grid.length;
     const cols = grid[0].length;
 
@@ -88,17 +70,12 @@ async function startSolver() {
     const visited = new Set();
     
     function dfs(r, c, currentWord, currentPath) {
-        if (currentWord.length > 10) return;
+        if (currentWord.length > 12) return;
 
         if (dictionary.has(currentWord)) {
-            // Avoid duplicates
-            const wordExists = result.some(w => w.word === currentWord);
-            if (!wordExists) {
+            if (!uniqueResults.has(currentWord)) {
                 console.log(currentWord);
-                result.push({
-                    word: currentWord,
-                    path: [...currentPath]
-                })
+                uniqueResults.set(currentWord, [...currentPath]);
             }
         }
 
@@ -110,7 +87,7 @@ async function startSolver() {
                 const key = `${newRow},${newCol}`;
                 if (!visited.has(key)) {
                     visited.add(key);
-                    currentPath.push([newRow, newCol]);
+                    currentPath.push(grid[newRow][newCol]);
 
                     dfs(newRow, newCol, currentWord + grid[newRow][newCol].char, currentPath);
 
@@ -133,5 +110,6 @@ async function startSolver() {
         }
     }
 
-    return result.sort((a,b) => b.word.length - a.word.length);
+    return Array.from(uniqueResults, ([word, path]) => ({ word, path }))
+                .sort((a, b) => b.word.length - a.word.length);
 }

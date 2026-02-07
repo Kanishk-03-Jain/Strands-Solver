@@ -20,14 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
       solveBtn.innerText = "⚡ Solve Puzzle";
       return;
     }
-
+    statusDiv.innerText = "Searching for words...";
     // Send a message to the content script running on the page
     try {
       const response = await chrome.tabs.sendMessage(tab.id, { action: "solve_strands" });
       
       if (response && response.status === "success") {
         statusDiv.className = "success";
-        statusDiv.innerText = "Solver started!";
+        statusDiv.innerText = "Solved";
       } else {
         throw new Error("Script not ready");
       }

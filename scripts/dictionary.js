@@ -1,5 +1,6 @@
 // scripts/dictionary.js
 
+// Loads the dictionary file and returns a Set of valid words
 window.loadDictionary = async function() {
     try {
         const url = chrome.runtime.getURL('assets/words_alpha.txt');
