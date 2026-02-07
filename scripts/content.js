@@ -70,12 +70,12 @@ async function startSolver() {
     const visited = new Set();
     
     function dfs(r, c, currentWord, currentPath) {
-        if (currentWord.length > 12) return;
+        if (currentWord.length > 10) return;
 
         if (dictionary.has(currentWord)) {
             if (!uniqueResults.has(currentWord)) {
                 console.log(currentWord);
-                uniqueResults.set(currentWord, [...currentPath]);
+                uniqueResults.set(currentWord, currentPath);
             }
         }
 
@@ -104,7 +104,7 @@ async function startSolver() {
             const key = `${r},${c}`;
             visited.add(key);
 
-            dfs(r, c, grid[r][c].char, [[r, c]]);
+            dfs(r, c, grid[r][c].char, [grid[r][c]]);
 
             visited.delete(key);
         }
