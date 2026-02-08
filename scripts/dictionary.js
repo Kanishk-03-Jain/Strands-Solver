@@ -1,5 +1,8 @@
 // scripts/dictionary.js
 
+/**
+ * Trie data structure implementation for efficient prefix-based word searching
+ */
 class TrieNode {
     constructor() {
         this.children = {};
@@ -24,7 +27,10 @@ class Trie {
     }
 }
 
-// Loads the dictionary file and returns a Trie of valid words
+/**
+ * Loads the dictionary file and returns a Trie of valid words
+ * @returns {Promise<Trie|null>} - A promise that resolves to a Trie of valid words or null if an error occurs
+ */
 window.loadTrieDictionary = async function() {
     try {
         const url = chrome.runtime.getURL('assets/words_alpha.txt');
