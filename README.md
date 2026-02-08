@@ -4,12 +4,12 @@ A Chrome Extension designed to automatically solve the [New York Times Strands](
 
 > 🚧 **Project Status: Work In Progress**
 > 
-> Currently, the extension can successfully scrape the game grid and uses a DFS algorithm to find valid words from a dictionary. The visual interaction (highlighting/submitting words on the game board) is currently in development.
+> Currently, the extension can successfully scrape the game grid and uses a Trie DFS algorithm to find valid words from a dictionary. The visual interaction (highlighting/submitting words on the game board) is currently in development.
 
 ## Features
 
 - **Game Grid Scraping**: Automatically detects the letter grid on the NYT Strands page.
-- **Word Finding Algorithm**: Uses Depth-First Search (DFS) to find all valid words formed by connecting adjacent letters (horizontal, vertical, and diagonal).
+- **Word Finding Algorithm**: Uses Depth-First Search (DFS) with a Trie data structure to find all valid words formed by connecting adjacent letters (horizontal, vertical, and diagonal).
 - **Extension Popup**: Simple interface to trigger the solver.
 
 ## Installation
@@ -34,6 +34,6 @@ Since this extension is not yet on the Chrome Web Store, you need to install it 
 - [x] Basic Extension Structure (Manifest, Popup)
 - [x] Grid Parsing Logic
 - [x] DFS Word Search Algorithm
-- [ ] Dictionary Optimization (Prefix Tree/Trie for faster search)
+- [x] Dictionary Optimization (Prefix Tree/Trie for faster search)
 - [ ] **Visual Solver**: Automatically highlight/drag across letters on the web page to submit words.
 - [ ] Display found words list in the Popup.
