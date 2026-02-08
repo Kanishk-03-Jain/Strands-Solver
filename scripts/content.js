@@ -6,8 +6,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>  {
     console.log("Received solve request from popup.");
 
     // Start the solver process
-    startSolver().then((result) => {
-        console.log("Solver finished. Found:", result);
+    startSolver().then(async (result) => {
+        console.log("Solver finished. Found:", result.length, "words.");
+        await inputWordstoPage(result);
         sendResponse({ status: "success", data: result });
     });
 
@@ -94,7 +95,7 @@ async function startSolver() {
         if (currentNode.isWord) {
             const wordStr = path.map(p => p.char).join("");
             if (!uniqueResults.has(wordStr)) {
-                uniqueResults.set(wordStr, path);
+                uniqueResults.set(wordStr, [...path]);
             }
         }
 
@@ -121,7 +122,48 @@ async function startSolver() {
             dfs(r, c, trieDictionary.root, []);
         }
     }
-
+    console.log(uniqueResults);
     return Array.from(uniqueResults, ([word, path]) => ({ word, path }))
                 .sort((a, b) => b.word.length - a.word.length);
+}
+
+function triggerClick(element) {
+    const opts = {
+        bubbles: true,
+        cancelable: true,
+        view: window
+    };
+
+    // 1. Mouse Down (Press)
+    element.dispatchEvent(new MouseEvent('mousedown', opts));
+
+    // 2. Mouse Up (Release)
+    element.dispatchEvent(new MouseEvent('mouseup', opts));
+    
+    // 3. Click (The resulting event)
+    element.dispatchEvent(new MouseEvent('click', opts));
+}
+
+async function inputWordstoPage(results) {
+    console.log("Inputting words to page...");
+
+    for (const { word, path } of results) {
+        console.log(`Submitting word: ${word}`);
+
+        for (let i = 0; i < path.length; i++) {
+            const cell = path[i];
+            const button = document.getElementById(cell.element.id);
+            console.log(`Clicking button for char '${cell.element}' at (${cell.r}, ${cell.c})`);
+            if (button) {
+                button.click();
+                // wait
+                await new Promise(resolve => setTimeout(resolve, 100));
+                if (i == path.length - 1) {
+                    // Last letter, release mouse
+                    button.click();
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+            }
+        }
+    }
 }
