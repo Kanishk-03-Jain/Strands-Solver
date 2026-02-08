@@ -1,5 +1,23 @@
 // scripts/content.js
 
+// Helper to resolve colors defined in CSS variables to their actual RGB values
+function getResolvedColor(cssVarName) {
+    // Create a temporary element ONCE to convert the variable to RGB
+    const temp = document.createElement("div");
+    temp.style.display = "none"; // Keep it hidden
+    temp.style.color = `var(${cssVarName})`;
+    document.body.appendChild(temp);
+    
+    // Get the computed RGB string
+    const rgbColor = window.getComputedStyle(temp).color;
+    
+    // Clean up
+    document.body.removeChild(temp);
+    return rgbColor;
+}
+
+const TARGET_BLUE_RGB = getResolvedColor('--strands-blue');
+
 // Listens for messages from the popup.js and starts the solver when requested
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>  {
   if (request.action === "solve_strands") {
@@ -125,12 +143,32 @@ async function startSolver() {
                 .sort((a, b) => b.word.length - a.word.length);
 }
 
+// 3. Your new, ultra-fast comparison function
+function isBlue(element) {
+    if (!element) return false;
+    
+    const btnColor = getComputedStyle(element).backgroundColor;
+    return btnColor === TARGET_BLUE_RGB;
+}
+
+
 async function inputWordstoPage(results) {
     console.log("Inputting words to page...");
 
+    // Keep track of submitted cells to avoid reusing them in multiple words
+    submittedSet = new Set();
+
     for (const { word, path } of results) {
         console.log(`Submitting word: ${word}`);
-
+        submitted = false;
+        for (const cell of path) {
+            if (submittedSet.has(cell.element.id)) {
+                console.warn(`Already visited cell ${cell.element.id}, skipping word ${word}`);
+                submitted = true;
+                break;
+            }
+        }
+        if (submitted) continue;
         for (let i = 0; i < path.length; i++) {
             const cell = path[i];
             const button = document.getElementById(cell.element.id);
@@ -142,6 +180,15 @@ async function inputWordstoPage(results) {
                     // Last letter, release mouse
                     button.click();
                     await new Promise(resolve => setTimeout(resolve, 200));
+                    const newButton = document.getElementById(cell.element.id);
+                    if (newButton && isBlue(newButton)) {
+                        // Word accepted, mark cells as submitted
+                        for (const c of path) {
+                            submittedSet.add(c.element.id);
+                        }
+                    } else {
+                        console.warn(`Word ${word} was not accepted by the game.`);
+                    }
                 }
             }
         }
