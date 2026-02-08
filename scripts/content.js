@@ -50,11 +50,18 @@ function getGrid() {
 
 async function startSolver() {
     console.log("Starting solver...");
-    const dictionary = await loadDictionary();
+
+    // Load Trie
+    const trieDictionary = await loadTrieDictionary();
+    if (!trieDictionary) {
+        return [];
+    }
+    
     const grid = getGrid();
-    const uniqueResults = new Map();
     const rows = grid.length;
     const cols = grid[0].length;
+    
+    const uniqueResults = new Map();
 
     const directions = [
         [-1, 0], // Up
@@ -69,44 +76,49 @@ async function startSolver() {
 
     const visited = new Set();
     
-    function dfs(r, c, currentWord, currentPath) {
-        if (currentWord.length > 10) return;
+    function dfs(r, c, parentNode, path) {
 
-        if (dictionary.has(currentWord)) {
-            if (!uniqueResults.has(currentWord)) {
-                console.log(currentWord);
-                uniqueResults.set(currentWord, currentPath);
+        const cell = grid[r][c];
+        if (!cell) return;
+
+        const char = cell.char;
+
+        if (!parentNode.children[char]) return;
+        
+        const currentNode = parentNode.children[char];
+
+        const key = `${r},${c}`;
+        visited.add(key);
+        path.push(cell);
+
+        if (currentNode.isWord) {
+            const wordStr = path.map(p => p.char).join("");
+            if (!uniqueResults.has(wordStr)) {
+                uniqueResults.set(wordStr, path);
             }
         }
 
+        // Visit all 8 directions
         for (const [dr, dc] of directions) {
             const newRow = r + dr;
             const newCol = c + dc;
 
             if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
-                const key = `${newRow},${newCol}`;
-                if (!visited.has(key)) {
-                    visited.add(key);
-                    currentPath.push(grid[newRow][newCol]);
-
-                    dfs(newRow, newCol, currentWord + grid[newRow][newCol].char, currentPath);
-
-                    visited.delete(key);
-                    currentPath.pop();
+                if (!visited.has(`${newRow},${newCol}`)) {
+                    dfs(newRow, newCol, currentNode, path);
                 }
             }
         }
+
+        // Backtrack
+        visited.delete(key);
+        path.pop();
     }
 
 
     for (let r = 0; r < rows; r++){
         for (let c = 0; c < cols; c++) {
-            const key = `${r},${c}`;
-            visited.add(key);
-
-            dfs(r, c, grid[r][c].char, [grid[r][c]]);
-
-            visited.delete(key);
+            dfs(r, c, trieDictionary.root, []);
         }
     }
 
