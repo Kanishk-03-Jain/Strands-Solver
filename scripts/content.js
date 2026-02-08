@@ -47,8 +47,6 @@ function getGrid() {
     return grid;
 }
 
-
-
 async function startSolver() {
     console.log("Starting solver...");
 
@@ -127,23 +125,6 @@ async function startSolver() {
                 .sort((a, b) => b.word.length - a.word.length);
 }
 
-function triggerClick(element) {
-    const opts = {
-        bubbles: true,
-        cancelable: true,
-        view: window
-    };
-
-    // 1. Mouse Down (Press)
-    element.dispatchEvent(new MouseEvent('mousedown', opts));
-
-    // 2. Mouse Up (Release)
-    element.dispatchEvent(new MouseEvent('mouseup', opts));
-    
-    // 3. Click (The resulting event)
-    element.dispatchEvent(new MouseEvent('click', opts));
-}
-
 async function inputWordstoPage(results) {
     console.log("Inputting words to page...");
 
@@ -153,7 +134,6 @@ async function inputWordstoPage(results) {
         for (let i = 0; i < path.length; i++) {
             const cell = path[i];
             const button = document.getElementById(cell.element.id);
-            console.log(`Clicking button for char '${cell.element}' at (${cell.r}, ${cell.c})`);
             if (button) {
                 button.click();
                 // wait
@@ -161,7 +141,7 @@ async function inputWordstoPage(results) {
                 if (i == path.length - 1) {
                     // Last letter, release mouse
                     button.click();
-                    await new Promise(resolve => setTimeout(resolve, 100));
+                    await new Promise(resolve => setTimeout(resolve, 200));
                 }
             }
         }
