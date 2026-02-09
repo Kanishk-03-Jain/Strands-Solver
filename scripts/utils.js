@@ -1,38 +1,16 @@
 // scripts/helper.js
 
 /**
- * Utility function to resolve CSS variable to RGB value for accurate color comparison
- * @param {string} cssVarName - The name of the CSS variable (e.g., '--strands-blue')
- * @returns {string} - The resolved RGB color string (e.g., 'rgb(0, 123, 255)')
- */
-function getResolvedColor(cssVarName) {
-
-    // Create a temporary element to convert the variable to RGB
-    const temp = document.createElement("div");
-    temp.style.display = "none"; // hidden
-    temp.style.color = `var(${cssVarName})`;
-    document.body.appendChild(temp);
-    
-    // Get the computed RGB string
-    const rgbColor = window.getComputedStyle(temp).color;
-    
-    // Clean up
-    document.body.removeChild(temp);
-    return rgbColor;
-}
-
-const TARGET_BLUE_RGB = getResolvedColor('--strands-blue');
-
-/**
- * Checks if a cell is blue (solved)
+ * Checks if the given element's background color indicates it has been submitted (turned blue)
  * @param {HTMLElement} element - The button element to check
  * @returns {boolean} - True if the element's background color matches the target blue, false otherwise
  */
-function isBlue(element) {
+function isValid(element) {
     if (!element) return false;
-    
-    const btnColor = getComputedStyle(element).backgroundColor;
-    return btnColor === TARGET_BLUE_RGB;
+
+    const valid = element.style.cssText.includes('--strands-blue') || element.style.cssText.includes('--text-spangram');
+    if (valid) return true;
+    return false;
 }
 
 /**

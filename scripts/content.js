@@ -105,7 +105,7 @@ async function startSolver() {
 }
 
 /**
- * 
+ * Input the found words into the game by clicking the corresponding buttons on the grid
  * @param {Array<Object>} words - Array of objects containing the word and its path on the grid 
  */
 async function inputWordstoPage(words) {
@@ -125,7 +125,7 @@ async function inputWordstoPage(words) {
         await submitWord(path);
 
         const newButton = document.getElementById(path[path.length - 1].element.id);
-        if (newButton && isBlue(newButton)) {
+        if (newButton && isValid(newButton)) {
             // Word accepted, mark cells as submitted
             console.log(`Word ${word} accepted! Marking cells as submitted.`);
             for (const c of path) {

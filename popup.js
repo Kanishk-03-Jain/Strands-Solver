@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (response && response.status === "success") {
         statusDiv.className = "success";
-        statusDiv.innerText = "Solved! I have left the Spanagram for you to find :)";
+        statusDiv.innerText = "Solved! If Spanagram is left, do it yourself :)";
       } else {
         throw new Error("Script not ready");
       }
