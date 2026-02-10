@@ -5,10 +5,22 @@
  * @param {HTMLElement} element - The button element to check
  * @returns {boolean} - True if the element's background color matches the target blue, false otherwise
  */
-function isValid(element) {
+function isValidWord(element) {
     if (!element) return false;
 
-    const valid = element.style.cssText.includes('--strands-blue') || element.style.cssText.includes('--text-spangram');
+    const valid = element.style.cssText.includes('--strands-blue');
+    if (valid) return true;
+    return false;
+}
+
+/** Checks if the given element's background color indicates it is a spanagram (turned yellow)
+ * @param {HTMLElement} element - The button element to check
+ * @returns {boolean} - True if the element's background color matches the target yellow, false otherwise
+ */
+function isSpanagram(element) {
+    if (!element) return false;
+    
+    const valid = element.style.cssText.includes('--text-spangram');
     if (valid) return true;
     return false;
 }
@@ -54,7 +66,7 @@ async function submitWord(path) {
     for (const cell of path) {
         const button = document.getElementById(cell.element.id);
         if (button) button.click();
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 20));
     }
 
     const lastCell = path[path.length - 1];
@@ -62,7 +74,7 @@ async function submitWord(path) {
     if (lastButton) {
         // double click to submit
         lastButton.click();
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 30));
     }
 }
 
@@ -79,4 +91,21 @@ function pathContainsSubmitted(path, submittedSet) {
         }
     }
     return false;
+}
+
+/**
+ * Checks if the given word is valid according to the trie dictionary
+ * @param {String} word - The word to check
+ * @param {Object} trieDictionary - The trie dictionary object
+ * @returns {boolean} - True if the word is valid according to the trie dictionary, false otherwise
+ */
+function isValidWordTrie(word, trieDictionary) {
+    let node = trieDictionary.root;
+    for (const char of word) {
+        if (!node.children[char]) {
+            return false;
+        }
+        node = node.children[char];
+    }
+    return node.isWord;
 }

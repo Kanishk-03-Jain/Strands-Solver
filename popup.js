@@ -23,11 +23,13 @@ document.addEventListener('DOMContentLoaded', function() {
     statusDiv.innerText = "Searching for words...";
     // Send a message to the content script running on the page
     try {
+      const startTime = performance.now();
       const response = await chrome.tabs.sendMessage(tab.id, { action: "solve_strands" });
+      const endTime = performance.now();
       
       if (response && response.status === "success") {
         statusDiv.className = "success";
-        statusDiv.innerText = "Solved! If Spanagram is left, do it yourself :)";
+        statusDiv.innerText = "Solved! Time taken: " + ((endTime - startTime) / 1000).toFixed(2) + " seconds.";
       } else {
         throw new Error("Script not ready");
       }

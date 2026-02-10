@@ -29,6 +29,7 @@
         "https://www.nytimes.com/games/strands*"
       ],
       "js": [
+        "scripts/algorithm.js",
         "scripts/utils.js",
         "scripts/dictionary.js",
         "scripts/content.js"
@@ -41,7 +42,8 @@
       "resources": [
         "assets/words_alpha.txt",
         "scripts/dictionary.js",
-        "scripts/utils.js"
+        "scripts/utils.js",
+        "scripts/algorithm.js"
       ],
       "matches": [
         "https://www.nytimes.com/*"
