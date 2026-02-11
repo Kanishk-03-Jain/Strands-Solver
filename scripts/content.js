@@ -72,7 +72,7 @@ async function inputWordstoPage(words, grid, trieDictionary) {
         const possibleSpanagrams = findPossibleSpanagrams(directions, grid, submittedSet);
 
         for (const { word, path } of possibleSpanagrams) {
-            if (isValidSpanagram(word, trieDictionary)) {
+            // if (isValidSpanagram(word, trieDictionary)) {
                 console.log(`Submitting possible spanagram: ${word}`);
                 await submitWord(path);
                 const newButton = document.getElementById(path[path.length - 1].element.id);
@@ -82,7 +82,7 @@ async function inputWordstoPage(words, grid, trieDictionary) {
                 } else {
                     console.warn(`Word ${word} was not accepted by the game.`);
                 }
-            }
+            // }
         }
     }
 }
