@@ -16,6 +16,11 @@ It uses a smart algorithms to parse the game grid, find all valid dictionary wor
   - Skips already used letters to avoid conflicts.
 - **Simple Popup Interface**: One-click "⚡ Solve Puzzle" button.
 
+## Demo
+
+https://github.com/user-attachments/assets/d3645230-59b5-4b4a-b205-48023940d847
+
+
 ## Installation
 
 Since this extension is not yet on the Chrome Web Store, you need to install it in **Developer Mode**:
